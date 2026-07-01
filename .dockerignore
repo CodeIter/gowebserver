@@ -1,0 +1,19 @@
+# .dockerignore
+# Ignore the following files and directories when building the Docker image
+
+# Ignore the Dockerfile and .dockerignore themselves
+Dockerfile
+.dockerignore
+
+# Ignore Git-related files
+.git
+.gitattributes
+.gitignore
+
+# Ignore Go build artifacts
+*.exe
+Makefile
+
+# Ignore Documentation and markdown files
+*.md
+
