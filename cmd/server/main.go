@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"log/slog"
 	"os"
-	"flag"
 
 	"my-go-server/internal/config"
 	"my-go-server/internal/server"

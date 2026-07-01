@@ -28,6 +28,6 @@ func Get() Info {
 }
 
 func (i Info) String() string {
-	return fmt.Sprintf("%s (%s) built on %s with %s", 
+	return fmt.Sprintf("%s (%s) built on %s with %s",
 		i.Version, i.GitCommit, i.BuildDate, i.GoVersion)
 }

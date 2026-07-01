@@ -34,7 +34,7 @@ func Load() (*Config, error) {
 		IdleTimeout:     120 * time.Second,
 		ShutdownTimeout: 30 * time.Second,
 		MaxConcurrency:  100,
-		RateLimit:       10,  // average rate (requests per second)
+		RateLimit:       10, // average rate (requests per second)
 		RateLimitBurst:  10, // burst capacity (max tokens in bucket)
 	}
 

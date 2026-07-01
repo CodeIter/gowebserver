@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"my-go-server/pkg/response"
 	"net/http"
 	"time"
-	"my-go-server/pkg/response"
 )
 
 func Health(w http.ResponseWriter, r *http.Request) {

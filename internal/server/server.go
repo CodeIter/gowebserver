@@ -21,7 +21,7 @@ func Run(cfg *config.Config) error {
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
 	mux.HandleFunc("GET /", handler.Home)
-	
+
 	// Serve Static Files
 	fs := http.FileServer(http.Dir(cfg.StaticDir))
 	mux.Handle("GET /static/", http.StripPrefix("/static/", fs))

@@ -62,7 +62,7 @@ func (rl *IPRateLimiter) cleanup() {
 		rl.mu.Lock()
 		for ip, limiter := range rl.ips {
 			// If the limiter hasn't been used recently (tokens are full), remove it.
-			// Note: rate.Limiter doesn't expose lastUsed, so we rely on token count 
+			// Note: rate.Limiter doesn't expose lastUsed, so we rely on token count
 			// or track lastSeen separately in a production map if strictness is needed.
 			// For simplicity, we check if tokens are full (idle).
 			if limiter.Tokens() == float64(rl.b) {
@@ -113,7 +113,7 @@ func RateLimiterMiddleware(limit int, burstCapacity int) func(http.Handler) http
 				w.Header().Set("X-RateLimit-Limit", string(rune(limit)))
 				w.Header().Set("X-RateLimit-Remaining", "0")
 				w.Header().Set("Retry-After", "1")
-				
+
 				response.Error(w, http.StatusTooManyRequests, "Rate limit exceeded")
 				return
 			}
