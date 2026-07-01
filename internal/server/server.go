@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
-	"time"
 
 	"my-go-server/internal/config"
 	"my-go-server/internal/handler"
@@ -67,7 +67,6 @@ func Run(cfg *config.Config) error {
 	return nil
 }
 
-// TODO Note: Replace itoa with strconv.Itoa in actual code.
 func itoa(i int) string {
-	return string(rune(i)) // Simplified for brevity; use strconv.Itoa in prod
+	return strconv.Itoa(i)
 }
