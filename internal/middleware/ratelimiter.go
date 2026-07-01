@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
-	"golang.org/x/time/rate"
+	"my-go-server/pkg/clientip"
 	"my-go-server/pkg/response"
+
+	"golang.org/x/time/rate"
 )
 
 // IPRateLimiter manages rate limiters for individual IPs.
@@ -73,32 +74,6 @@ func (rl *IPRateLimiter) cleanup() {
 	}
 }
 
-// extractIP gets the real client IP, handling proxied requests.
-// TODO move to pkg/clientip/ dir
-func extractIP(r *http.Request) string {
-	// Check X-Forwarded-For header first (set by load balancers/proxies)
-	xf := r.Header.Get("X-Forwarded-For")
-	if xf != "" {
-		// Take the first IP in the list (original client)
-		parts := strings.Split(xf, ",")
-		return strings.TrimSpace(parts[0])
-	}
-
-	// Check X-Real-IP (common in Nginx setups)
-	xr := r.Header.Get("X-Real-IP")
-	if xr != "" {
-		return xr
-	}
-
-	// Fallback to RemoteAddr
-	ip := r.RemoteAddr
-	// Strip port number if present
-	if idx := strings.LastIndex(ip, ":"); idx != -1 {
-		return ip[:idx]
-	}
-	return ip
-}
-
 // RateLimiterMiddleware creates the HTTP middleware.
 func RateLimiterMiddleware(limit int, burstCapacity int) func(http.Handler) http.Handler {
 	// Convert int to rate.Limit (float64)
@@ -106,7 +81,7 @@ func RateLimiterMiddleware(limit int, burstCapacity int) func(http.Handler) http
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ip := extractIP(r)
+			ip := clientip.ExtractIP(r)
 
 			if !rl.Allow(ip) {
 				// Set standard rate limit headers
