@@ -10,6 +10,7 @@ import (
 	"my-go-server/version"
 )
 
+// Config holds the server configuration parameters.
 type Config struct {
 	Host            string
 	Port            int
@@ -23,6 +24,8 @@ type Config struct {
 	RateLimitBurst  int // max tokens in bucket
 }
 
+// Load reads the configuration from environment variables,
+// command line flags, and static defaults.
 func Load() (*Config, error) {
 	// 1. Static Defaults
 	cfg := &Config{
@@ -61,6 +64,7 @@ func Load() (*Config, error) {
 		os.Exit(0)
 	}
 
+	// Validate Port Range
 	if cfg.Port < 1 || cfg.Port > 65535 {
 		return nil, fmt.Errorf("invalid port: %d", cfg.Port)
 	}

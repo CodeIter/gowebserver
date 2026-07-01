@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Health checks if the server is healthy
 func Health(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]string{
 		"status": "healthy",
@@ -13,11 +14,13 @@ func Health(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Ready checks if the server is ready to accept requests
 func Ready(w http.ResponseWriter, r *http.Request) {
 	// Check DB/Dependencies here
 	response.JSON(w, http.StatusOK, map[string]string{"status": "ready"})
 }
 
+// Home serves the home page
 func Home(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]string{"message": "Welcome to Go Server"})
 }

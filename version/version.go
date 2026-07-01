@@ -27,6 +27,8 @@ func Get() Info {
 	}
 }
 
+// String returns a formatted string representation of
+// the version information.
 func (i Info) String() string {
 	return fmt.Sprintf("%s (%s) built on %s with %s",
 		i.Version, i.GitCommit, i.BuildDate, i.GoVersion)

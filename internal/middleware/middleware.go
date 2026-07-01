@@ -6,7 +6,8 @@ import (
 	"time"
 )
 
-// Logger logs request details
+// Logger is a middleware that logs the start and end of each request
+// along with its duration.
 func Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -16,7 +17,7 @@ func Logger(next http.Handler) http.Handler {
 	})
 }
 
-// SecurityHeaders adds essential security headers
+// SecurityHeaders adds common security headers to the response.
 func SecurityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -28,6 +29,7 @@ func SecurityHeaders(next http.Handler) http.Handler {
 }
 
 // ConcurrencyLimiter uses a buffered channel as a semaphore
+// to limit the number of concurrent requests being processed.
 func ConcurrencyLimiter(max int) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		sem := make(chan struct{}, max)

@@ -14,6 +14,8 @@ import (
 	"my-go-server/internal/middleware"
 )
 
+// Run starts the HTTP server with the provided configuration
+// and handles graceful shutdown.
 func Run(cfg *config.Config) error {
 	mux := http.NewServeMux()
 
