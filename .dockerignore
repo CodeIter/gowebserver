@@ -13,6 +13,7 @@ Dockerfile
 # Ignore Go build artifacts
 *.exe
 Makefile
+/bin/
 
 # Ignore Documentation and markdown files
 *.md
