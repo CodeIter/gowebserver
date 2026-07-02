@@ -14,6 +14,7 @@ Dockerfile
 *.exe
 Makefile
 /bin/
+*.log
 
 # Ignore Documentation and markdown files
 *.md
