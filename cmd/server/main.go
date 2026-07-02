@@ -10,10 +10,12 @@ import (
 
 func main() {
 
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+
 	// Set up structured logging
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	})))
+	slog.SetDefault(logger)
 
 	// Load Configuration
 	cfg, err := config.Load()
