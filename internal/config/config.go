@@ -69,5 +69,23 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("invalid port: %d", cfg.Port)
 	}
 
+	if err := ensureDirectory(cfg.StaticDir); err != nil {
+		return nil, err
+	}
+
 	return cfg, nil
+}
+
+func ensureDirectory(path string) error {
+	info, err := os.Stat(path)
+	if err == nil {
+		if !info.IsDir() {
+			return fmt.Errorf("path exists and is not a directory: %s", path)
+		}
+		return nil
+	}
+	if os.IsNotExist(err) {
+		return os.MkdirAll(path, 0o755)
+	}
+	return err
 }
