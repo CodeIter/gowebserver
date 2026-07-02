@@ -19,6 +19,11 @@ import (
 func Run(cfg *config.Config) error {
 	mux := http.NewServeMux()
 
+	// Load HTML templates for server-side views.
+	if err := handler.LoadTemplates(cfg.ViewsDir); err != nil {
+		return err
+	}
+
 	// Register Routes (Go 1.22+ method patterns)
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
