@@ -15,6 +15,7 @@ type Config struct {
 	Host            string
 	Port            int
 	StaticDir       string
+	ViewsDir        string
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
@@ -32,6 +33,7 @@ func Load() (*Config, error) {
 		Host:            "0.0.0.0",
 		Port:            8000,
 		StaticDir:       "./static",
+		ViewsDir:        "./views",
 		ReadTimeout:     5 * time.Second,
 		WriteTimeout:    10 * time.Second,
 		IdleTimeout:     120 * time.Second,
@@ -56,6 +58,7 @@ func Load() (*Config, error) {
 	flag.StringVar(&cfg.Host, "host", cfg.Host, "Server host")
 	flag.IntVar(&cfg.Port, "port", cfg.Port, "Server port")
 	flag.StringVar(&cfg.StaticDir, "static", cfg.StaticDir, "Static files directory")
+	flag.StringVar(&cfg.ViewsDir, "views", cfg.ViewsDir, "View templates directory")
 	flag.Parse()
 
 	// Handle version flag
@@ -70,6 +73,9 @@ func Load() (*Config, error) {
 	}
 
 	if err := ensureDirectory(cfg.StaticDir); err != nil {
+		return nil, err
+	}
+	if err := ensureDirectory(cfg.ViewsDir); err != nil {
 		return nil, err
 	}
 
