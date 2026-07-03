@@ -65,6 +65,7 @@ func Run(cfg *config.Config) error {
 		if info, err := iofs.Stat(assets.EmbeddedFiles, embeddedPath); err == nil && !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(path.Base(r.URL.Path), ".") {
 			fmt.Println("Serving embedded public file:", embeddedPath)
 			// XXX publicFSHandler.ServeHTTP automatically redirects index.html to / .
+			// So public directory could not have index.html file.
 			publicFSHandler.ServeHTTP(w, r)
 			return
 		}
