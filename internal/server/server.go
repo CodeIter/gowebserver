@@ -2,11 +2,15 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"slices"
 	"strconv"
+	"strings"
 	"syscall"
 
 	"my-go-server/internal/config"
@@ -27,11 +31,53 @@ func Run(cfg *config.Config) error {
 	// Register Routes (Go 1.22+ method patterns)
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
-	mux.HandleFunc("GET /", handler.Home)
 
 	// Serve Static Files
-	fs := http.FileServer(http.Dir(cfg.StaticDir))
-	mux.Handle("GET /static/", http.StripPrefix("/static/", fs))
+	staticFs := http.FileServer(http.Dir(cfg.StaticDir))
+	mux.Handle("GET /static/", http.StripPrefix("/static/", staticFs))
+
+	// Create a combined handler: try public files first, fall back to home page
+	publicFs := http.FileServer(http.Dir(cfg.PublicDir))
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		// Only try to serve from public dir if path is not just "/"
+		// (or if you want to check for specific files)
+
+		// Redirect /index.html and similar to /
+		indexFiles := []string{"/index.html", "/default.html"}
+		if slices.Contains(indexFiles, r.URL.Path) {
+			http.Redirect(w, r, "/", http.StatusMovedPermanently)
+			return
+		}
+		// Check if the requested path exists in the public directory
+		filePath := filepath.Join(cfg.PublicDir, r.URL.Path)
+		info, err := os.Stat(filePath)
+		if err != nil {
+			slog.Error("cannot stat file", "path", filePath, "err", err)
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
+		}
+		// If the path exists, is not a directory, not slash route, and not a dotfile,
+		// serve it from public dir
+		if !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(filepath.Base(r.URL.Path), ".") {
+			publicFs.ServeHTTP(w, r)
+			return
+		}
+		// Path is "/", serve home page
+		handler.Home(w, r)
+	})
+
+	mux.HandleFunc("GET /robots.txt", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintf(w, `User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Allow: /admin/public/
+
+# Sitemap location
+Sitemap: https://%s/sitemap.xml
+Host: %s
+`, r.Host, r.Host)
+	})
 
 	// Apply Middleware Chain (Inner to Outer)
 	var handler http.Handler = mux
