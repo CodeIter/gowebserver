@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"my-go-server/version"
+
+	"github.com/joho/godotenv"
 )
 
 // Config holds the server configuration parameters.
@@ -29,6 +31,9 @@ type Config struct {
 // Load reads the configuration from environment variables,
 // command line flags, and static defaults.
 func Load() (*Config, error) {
+	// Load .env file if it exists (no error if missing)
+	loadEnv()
+
 	// 1. Static Defaults
 	cfg := &Config{
 		Host:            "0.0.0.0",
@@ -100,4 +105,10 @@ func ensureDirectory(path string) error {
 		return os.MkdirAll(path, 0o755)
 	}
 	return err
+}
+
+// loadEnv loads environment variables from .env file if it exists.
+// Missing .env file is not an error.
+func loadEnv() {
+	_ = godotenv.Load()
 }
