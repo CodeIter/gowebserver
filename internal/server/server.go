@@ -53,7 +53,7 @@ func Run(cfg *config.Config) error {
 		info, err := os.Stat(filePath)
 		if err != nil {
 			slog.Error("cannot stat file", "path", filePath, "err", err)
-			http.Error(w, "internal server error", http.StatusInternalServerError)
+			http.Error(w, "file not found", http.StatusNotFound)
 			return
 		}
 		// If the path exists, is not a directory, not slash route, and not a dotfile,
