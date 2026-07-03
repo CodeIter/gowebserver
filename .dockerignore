@@ -16,6 +16,10 @@ Makefile
 /bin/
 *.log
 
+# Ignore environment files
+.env
+.env.example
+
 # Ignore Documentation and markdown files
 *.md
 
