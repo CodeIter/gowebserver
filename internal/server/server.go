@@ -55,15 +55,12 @@ func Run(cfg *config.Config) error {
 
 	// Create a combined handler: try public files first, fall back to home page
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Request path:", r.URL.Path)
-
 		// Try serving from embedded public FS
 		embeddedPath := path.Join("public", strings.TrimPrefix(r.URL.Path, "/"))
 		if embeddedPath == "public/" {
 			embeddedPath = "public/index.html"
 		}
 		if info, err := iofs.Stat(assets.EmbeddedFiles, embeddedPath); err == nil && !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(path.Base(r.URL.Path), ".") {
-			fmt.Println("Serving embedded public file:", embeddedPath)
 			// XXX publicFSHandler.ServeHTTP automatically redirects index.html to / .
 			// So public directory could not have index.html file.
 			publicFSHandler.ServeHTTP(w, r)
@@ -73,13 +70,11 @@ func Run(cfg *config.Config) error {
 		// Redirect /index.html and similar to /
 		indexFiles := []string{"/index.html", "/default.html"}
 		if slices.Contains(indexFiles, r.URL.Path) {
-			fmt.Println("Redirecting to / from:", r.URL.Path)
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 			return
 		}
 
 		// Path is "/" or not found in public, serve home page
-		fmt.Println("Serving home page for path:", r.URL.Path)
 		handler.Home(w, r)
 	})
 
