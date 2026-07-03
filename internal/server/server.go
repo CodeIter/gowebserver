@@ -3,16 +3,18 @@ package server
 import (
 	"context"
 	"fmt"
+	iofs "io/fs"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
+	"path"
 	"slices"
 	"strconv"
 	"strings"
 	"syscall"
 
+	assets "my-go-server"
 	"my-go-server/internal/config"
 	"my-go-server/internal/handler"
 	"my-go-server/internal/middleware"
@@ -24,7 +26,7 @@ func Run(cfg *config.Config) error {
 	mux := http.NewServeMux()
 
 	// Load HTML templates for server-side views.
-	if err := handler.LoadTemplates(cfg.ViewsDir); err != nil {
+	if err := handler.LoadTemplates(); err != nil {
 		return err
 	}
 
@@ -32,19 +34,36 @@ func Run(cfg *config.Config) error {
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
 
-	// Serve Static Files
-	staticFs := http.FileServer(http.Dir(cfg.StaticDir))
-	mux.Handle("GET /static/", http.StripPrefix("/static/", staticFs))
-
 	// Serve External Files
 	externalFs := http.FileServer(http.Dir(cfg.ExternalDir))
 	mux.Handle("GET /external/", http.StripPrefix("/external/", externalFs))
 
+	// Serve Static Files from embedded filesystem
+	subStatic, err := iofs.Sub(assets.EmbeddedFiles, "static")
+	if err != nil {
+		return err
+	}
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.FS(subStatic)))
+	mux.Handle("GET /static/", staticHandler)
+
+	// Serve Public Files from embedded filesystem
+	subPublic, err := iofs.Sub(assets.EmbeddedFiles, "public")
+	if err != nil {
+		return err
+	}
+	publicFSHandler := http.FileServer(http.FS(subPublic))
+
 	// Create a combined handler: try public files first, fall back to home page
-	publicFs := http.FileServer(http.Dir(cfg.PublicDir))
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		// Only try to serve from public dir if path is not just "/"
-		// (or if you want to check for specific files)
+		// Try serving from embedded public FS
+		embeddedPath := path.Join("public", strings.TrimPrefix(r.URL.Path, "/"))
+		if embeddedPath == "public/" {
+			embeddedPath = "public/index.html"
+		}
+		if info, err := iofs.Stat(assets.EmbeddedFiles, embeddedPath); err == nil && !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(path.Base(r.URL.Path), ".") {
+			publicFSHandler.ServeHTTP(w, r)
+			return
+		}
 
 		// Redirect /index.html and similar to /
 		indexFiles := []string{"/index.html", "/default.html"}
@@ -52,21 +71,8 @@ func Run(cfg *config.Config) error {
 			http.Redirect(w, r, "/", http.StatusMovedPermanently)
 			return
 		}
-		// Check if the requested path exists in the public directory
-		filePath := filepath.Join(cfg.PublicDir, r.URL.Path)
-		info, err := os.Stat(filePath)
-		if err != nil {
-			slog.Error("cannot stat file", "path", filePath, "err", err)
-			http.Error(w, "file not found", http.StatusNotFound)
-			return
-		}
-		// If the path exists, is not a directory, not slash route, and not a dotfile,
-		// serve it from public dir
-		if !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(filepath.Base(r.URL.Path), ".") {
-			publicFs.ServeHTTP(w, r)
-			return
-		}
-		// Path is "/", serve home page
+
+		// Path is "/" or not found in public, serve home page
 		handler.Home(w, r)
 	})
 

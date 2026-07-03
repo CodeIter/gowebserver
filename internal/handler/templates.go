@@ -3,20 +3,17 @@ package handler
 import (
 	"html/template"
 	"log/slog"
+	assets "my-go-server"
 	"net/http"
-	"path/filepath"
 )
 
 // templates holds the parsed HTML templates for rendering views.
 var templates *template.Template
 
-// LoadTemplates parses the HTML templates from the views directory.
-func LoadTemplates(viewsDir string) error {
+// LoadTemplates parses the HTML templates from the embedded filesystem.
+func LoadTemplates() error {
 	var err error
-	templates, err = template.ParseFiles(
-		filepath.Join(viewsDir, "layout.html"),
-		filepath.Join(viewsDir, "home.html"),
-	)
+	templates, err = template.ParseFS(assets.EmbeddedFiles, "views/layout.html", "views/home.html")
 	return err
 }
 
