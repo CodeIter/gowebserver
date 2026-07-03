@@ -15,6 +15,7 @@ Dockerfile
 Makefile
 /bin/
 *.log
+/server
 
 # Ignore environment files
 .env
