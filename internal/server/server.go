@@ -36,6 +36,10 @@ func Run(cfg *config.Config) error {
 	staticFs := http.FileServer(http.Dir(cfg.StaticDir))
 	mux.Handle("GET /static/", http.StripPrefix("/static/", staticFs))
 
+	// Serve External Files
+	externalFs := http.FileServer(http.Dir(cfg.ExternalDir))
+	mux.Handle("GET /external/", http.StripPrefix("/external/", externalFs))
+
 	// Create a combined handler: try public files first, fall back to home page
 	publicFs := http.FileServer(http.Dir(cfg.PublicDir))
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {

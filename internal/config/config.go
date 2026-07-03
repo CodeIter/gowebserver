@@ -19,6 +19,7 @@ type Config struct {
 	StaticDir       string
 	PublicDir       string
 	ViewsDir        string
+	ExternalDir     string
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
@@ -41,6 +42,7 @@ func Load() (*Config, error) {
 		StaticDir:       "./static",
 		PublicDir:       "./public",
 		ViewsDir:        "./views",
+		ExternalDir:     "./external",
 		ReadTimeout:     5 * time.Second,
 		WriteTimeout:    10 * time.Second,
 		IdleTimeout:     120 * time.Second,
@@ -67,6 +69,7 @@ func Load() (*Config, error) {
 	flag.StringVar(&cfg.StaticDir, "static", cfg.StaticDir, "Static files directory mounted at /static route")
 	flag.StringVar(&cfg.PublicDir, "public", cfg.PublicDir, "Public files directory mounted at / route")
 	flag.StringVar(&cfg.ViewsDir, "views", cfg.ViewsDir, "View templates directory")
+	flag.StringVar(&cfg.ExternalDir, "external", cfg.ExternalDir, "External files directory mounted at /external route, reserved for large files")
 	flag.Parse()
 
 	// Handle version flag
@@ -87,6 +90,9 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 	if err := ensureDirectory(cfg.ViewsDir); err != nil {
+		return nil, err
+	}
+	if err := ensureDirectory(cfg.ExternalDir); err != nil {
 		return nil, err
 	}
 
