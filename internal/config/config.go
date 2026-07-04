@@ -16,7 +16,7 @@ import (
 type Config struct {
 	Host            string
 	Port            int
-	ExternalDir     string
+	ResourcesDir    string
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
@@ -36,7 +36,7 @@ func Load() (*Config, error) {
 	cfg := &Config{
 		Host:            "0.0.0.0",
 		Port:            8000,
-		ExternalDir:     "./external",
+		ResourcesDir:    "./resources",
 		ReadTimeout:     5 * time.Second,
 		WriteTimeout:    10 * time.Second,
 		IdleTimeout:     120 * time.Second,
@@ -60,7 +60,7 @@ func Load() (*Config, error) {
 	versionFlag := flag.Bool("version", false, "print version and exit")
 	flag.StringVar(&cfg.Host, "host", cfg.Host, "Server host")
 	flag.IntVar(&cfg.Port, "port", cfg.Port, "Server port")
-	flag.StringVar(&cfg.ExternalDir, "external", cfg.ExternalDir, "External files directory mounted at /external route, reserved for large files")
+	flag.StringVar(&cfg.ResourcesDir, "resources", cfg.ResourcesDir, "External Resources directory, reserved for large files")
 	flag.Parse()
 
 	// Handle version flag
@@ -74,7 +74,7 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("invalid port: %d", cfg.Port)
 	}
 
-	if err := ensureDirectory(cfg.ExternalDir); err != nil {
+	if err := ensureDirectory(cfg.ResourcesDir); err != nil {
 		return nil, err
 	}
 

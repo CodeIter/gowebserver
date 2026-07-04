@@ -31,7 +31,7 @@ This project supports `.env` files (loaded automatically) and a few command-line
 - Flags (highest priority):
 	- `-host` (default `0.0.0.0`)
 	- `-port` (default `8000`)
-	- `-external` (path served at `/external/` for large files)
+	- `-resources` (path served at `/resources/` for large files)
 	- `-version` (prints binary version)
 
 `.env` variables (examples in `.env.example`): `HOST`, `PORT` ...
@@ -47,7 +47,7 @@ This project supports `.env` files (loaded automatically) and a few command-line
 - GET `/static/*` - static assets
 - GET `/health` - health check (JSON)
 - GET `/ready` - readiness check (JSON)
-- GET `/external/*` - served from the path set by `-external`
+- GET `/resources/*` - served from the path set by `-resources`
 - GET `/robots.txt`
 
 ## Templates

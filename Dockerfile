@@ -25,9 +25,9 @@ WORKDIR /app
 # Install necessary packages
 RUN apk --no-cache add ca-certificates
 
-# Copy the built binary and external files from the builder stage
+# Copy the built binary and resources files from the builder stage
 COPY --from=builder /app/server /app/server
-COPY --from=builder /app/external /app/external
+COPY --from=builder /app/resources /app/resources
 
 # Expose the port the application will run on
 EXPOSE 8000
@@ -38,4 +38,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/server"]
-CMD ["--host", "0.0.0.0", "--port", "8000", "--external", "/app/external"]
+CMD ["--host", "0.0.0.0", "--port", "8000", "--resources", "/app/resources"]

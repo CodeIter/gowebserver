@@ -34,9 +34,9 @@ func Run(cfg *config.Config) error {
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
 
-	// Serve External Files
-	externalFs := http.FileServer(http.Dir(cfg.ExternalDir))
-	mux.Handle("GET /external/", http.StripPrefix("/external/", externalFs))
+	// Serve Resources Files
+	ResourcesFs := http.FileServer(http.Dir(cfg.ResourcesDir))
+	mux.Handle("GET /resources/", http.StripPrefix("/resources/", ResourcesFs))
 
 	// Serve Static Files from embedded filesystem
 	subStatic, err := iofs.Sub(assets.EmbeddedFiles, "static")
