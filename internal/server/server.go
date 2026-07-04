@@ -61,7 +61,7 @@ func Run(cfg *config.Config) error {
 			embeddedPath = "public/index.html"
 		}
 		if info, err := iofs.Stat(assets.EmbeddedFiles, embeddedPath); err == nil && !info.IsDir() && r.URL.Path != "/" && !strings.HasPrefix(path.Base(r.URL.Path), ".") {
-			// XXX publicFSHandler.ServeHTTP automatically redirects index.html to / .
+			// XXX http.FileServer automatically redirects index.html to / .
 			// So public directory could not have index.html file.
 			publicFSHandler.ServeHTTP(w, r)
 			return
@@ -71,6 +71,12 @@ func Run(cfg *config.Config) error {
 		indexFiles := []string{"/index.html", "/default.html"}
 		if slices.Contains(indexFiles, r.URL.Path) {
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+			return
+		}
+
+		if r.URL.Path != "/" {
+			// If the path is not found in public, return 404
+			http.NotFound(w, r)
 			return
 		}
 
