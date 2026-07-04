@@ -23,4 +23,4 @@ Makefile
 
 # Ignore Documentation and markdown files
 *.md
-
+LICENSE
