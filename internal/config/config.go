@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"my-go-server/version"
+	"github.com/CodeIter/gowebserver/version"
 
 	"github.com/joho/godotenv"
 )

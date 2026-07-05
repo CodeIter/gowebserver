@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"my-go-server/pkg/response"
+	"github.com/CodeIter/gowebserver/pkg/response"
 )
 
 // Ready checks if the server is ready to accept requests

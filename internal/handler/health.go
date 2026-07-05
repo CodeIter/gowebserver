@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"my-go-server/pkg/response"
+	"github.com/CodeIter/gowebserver/pkg/response"
 )
 
 // Health checks if the server is healthy

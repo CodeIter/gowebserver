@@ -14,10 +14,10 @@ import (
 	"strings"
 	"syscall"
 
-	assets "my-go-server"
-	"my-go-server/internal/config"
-	"my-go-server/internal/handler"
-	"my-go-server/internal/middleware"
+	assets "github.com/CodeIter/gowebserver"
+	"github.com/CodeIter/gowebserver/internal/config"
+	"github.com/CodeIter/gowebserver/internal/handler"
+	"github.com/CodeIter/gowebserver/internal/middleware"
 )
 
 // Run starts the HTTP server with the provided configuration

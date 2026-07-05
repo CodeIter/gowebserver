@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"os"
 
-	"my-go-server/internal/config"
-	"my-go-server/internal/server"
+	"github.com/CodeIter/gowebserver/internal/config"
+	"github.com/CodeIter/gowebserver/internal/server"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module my-go-server
+module github.com/CodeIter/gowebserver
 
 go 1.26.4
 

@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"github.com/CodeIter/gowebserver/pkg/clientip"
 	"log/slog"
-	"my-go-server/pkg/clientip"
 	"net/http"
 	"time"
 )

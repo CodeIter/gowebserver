@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"my-go-server/pkg/clientip"
-	"my-go-server/pkg/response"
+	"github.com/CodeIter/gowebserver/pkg/clientip"
+	"github.com/CodeIter/gowebserver/pkg/response"
 
 	"golang.org/x/time/rate"
 )

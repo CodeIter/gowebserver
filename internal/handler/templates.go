@@ -3,8 +3,9 @@ package handler
 import (
 	"html/template"
 	"log/slog"
-	assets "my-go-server"
 	"net/http"
+
+	assets "github.com/CodeIter/gowebserver"
 )
 
 // templates holds the parsed HTML templates for rendering views.
