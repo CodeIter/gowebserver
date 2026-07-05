@@ -17,6 +17,7 @@ type Config struct {
 	Host            string
 	Port            int
 	ResourcesDir    string
+	ServeDir        string
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
@@ -37,6 +38,7 @@ func Load() (*Config, error) {
 		Host:            "0.0.0.0",
 		Port:            8000,
 		ResourcesDir:    "./resources",
+		ServeDir:        "false",
 		ReadTimeout:     5 * time.Second,
 		WriteTimeout:    10 * time.Second,
 		IdleTimeout:     120 * time.Second,
@@ -61,6 +63,7 @@ func Load() (*Config, error) {
 	flag.StringVar(&cfg.Host, "host", cfg.Host, "Server host")
 	flag.IntVar(&cfg.Port, "port", cfg.Port, "Server port")
 	flag.StringVar(&cfg.ResourcesDir, "resources", cfg.ResourcesDir, "External Resources directory, reserved for large files")
+	flag.StringVar(&cfg.ServeDir, "serve", cfg.ServeDir, "Serve additional directory at / route")
 	flag.Parse()
 
 	// Handle version flag
@@ -76,6 +79,12 @@ func Load() (*Config, error) {
 
 	if err := ensureDirectory(cfg.ResourcesDir); err != nil {
 		return nil, err
+	}
+
+	if cfg.ServeDir != "false" {
+		if err := ensureDirectory(cfg.ServeDir); err != nil {
+			return nil, err
+		}
 	}
 
 	return cfg, nil
