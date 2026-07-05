@@ -32,6 +32,7 @@ This project supports `.env` files (loaded automatically) and a few command-line
 	- `-host` (default `0.0.0.0`)
 	- `-port` (default `8000`)
 	- `-resources` (path served at `/resources/` for large files)
+	- `-serve` (addional path served at `/`)
 	- `-version` (prints binary version)
 
 `.env` variables (examples in `.env.example`): `HOST`, `PORT` ...
@@ -43,6 +44,7 @@ This project supports `.env` files (loaded automatically) and a few command-line
 ## Routes
 
 - GET `/` - home page (rendered with Go `html/template`)
+- GET `/*` - addional path served at `/` route set by `-serve`
 - GET `/*` - public assets served at `/` route
 - GET `/static/*` - static assets
 - GET `/health` - health check (JSON)
