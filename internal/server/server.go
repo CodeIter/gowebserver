@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -64,12 +65,14 @@ func Run(cfg *config.Config) error {
 
 		// Try serving from ServeDir if configured
 		if cfg.ServeDir != "false" && r.URL.Path != "/" {
-			fmt.Printf("Attempting to serve %s from ServeDir: %s\n", r.URL.Path, cfg.ServeDir)
-			// FOXME this call serve 404 for not found files, but we want to fallback to public or home page for not found files. we should by pass the request to next handler if file not found in ServeDir. we should test for file existence before calling serveDirHandler.ServeHTTP
-			serveDirHandler.ServeHTTP(w, r)
-			return
+			// Check if file exists in ServeDir before serving
+			filePath := filepath.Join(cfg.ServeDir, strings.TrimPrefix(r.URL.Path, "/"))
+			if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
+				// XXX http.FileServer automatically return 404 if file not found, so we need to check if file exists before calling ServeHTTP
+				serveDirHandler.ServeHTTP(w, r)
+				return
+			}
 		}
-		fmt.Printf("Attempting to serve %s from embedded public FS\n", r.URL.Path)
 
 		// Try serving from embedded public FS
 		embeddedPath := path.Join("public", strings.TrimPrefix(r.URL.Path, "/"))
