@@ -35,6 +35,7 @@ func Run(cfg *config.Config) error {
 	// Register Routes (Go 1.22+ method patterns)
 	mux.HandleFunc("GET /health", handler.Health)
 	mux.HandleFunc("GET /ready", handler.Ready)
+	mux.HandleFunc("GET /about", handler.About)
 
 	// Serve Resources Files
 	ResourcesFs := http.FileServer(http.Dir(cfg.ResourcesDir))
