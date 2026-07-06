@@ -1,4 +1,4 @@
-package handler
+package template
 
 import (
 	"html/template"
@@ -18,8 +18,8 @@ func LoadTemplates() error {
 	return err
 }
 
-// renderTemplate renders the specified template with the provided data.
-func renderTemplate(w http.ResponseWriter, tpl string, data any) {
+// RenderTemplate renders the specified template with the provided data.
+func RenderTemplate(w http.ResponseWriter, tpl string, data any) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := templates.ExecuteTemplate(w, tpl, data); err != nil {
 		slog.Error("Error executing template", slog.Any("error", err))

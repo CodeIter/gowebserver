@@ -19,6 +19,7 @@ import (
 	"github.com/CodeIter/gowebserver/internal/config"
 	"github.com/CodeIter/gowebserver/internal/handler"
 	"github.com/CodeIter/gowebserver/internal/middleware"
+	"github.com/CodeIter/gowebserver/internal/template"
 )
 
 // Run starts the HTTP server with the provided configuration
@@ -27,7 +28,7 @@ func Run(cfg *config.Config) error {
 	mux := http.NewServeMux()
 
 	// Load HTML templates for server-side views.
-	if err := handler.LoadTemplates(); err != nil {
+	if err := template.LoadTemplates(); err != nil {
 		return err
 	}
 
