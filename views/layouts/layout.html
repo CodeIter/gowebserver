@@ -18,11 +18,7 @@
     </div>
 
     <div class="w3-container w3-content w3-padding-64" style="max-width:900px">
-        {{ if eq .PageTemplate "home" }}
-            {{ template "home" . }}
-        {{ else if eq .PageTemplate "about" }}
-            {{ template "about" . }}
-        {{ end }}
+        {{ renderTemplate .PageTemplate . }}
     </div>
 
     <footer class="w3-container w3-blue w3-center w3-margin-top">

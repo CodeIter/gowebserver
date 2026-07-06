@@ -1,6 +1,7 @@
 package template
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -32,9 +33,13 @@ func LoadTemplates() error {
 		return fmt.Errorf("error walking templates directory: %w", err)
 	}
 
-	// Parse all collected template files
+	// Parse all collected template files with custom functions
 	var templateErr error
-	templates, templateErr = template.ParseFS(assets.EmbeddedFiles, templateFiles...)
+	templates, templateErr = template.New("").
+		Funcs(template.FuncMap{
+			"renderTemplate": renderTemplateFunc,
+		}).
+		ParseFS(assets.EmbeddedFiles, templateFiles...)
 	return templateErr
 }
 
@@ -45,4 +50,15 @@ func RenderTemplate(w http.ResponseWriter, tpl string, data any) {
 		slog.Error("Error executing template", slog.Any("error", err))
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
+}
+
+// renderTemplateFunc is a template function to dynamically render templates
+func renderTemplateFunc(name string, data any) (template.HTML, error) {
+	var buf bytes.Buffer
+	err := templates.ExecuteTemplate(&buf, name, data)
+	if err != nil {
+		slog.Error("Error rendering template", slog.String("template", name), slog.Any("error", err))
+		return "", err
+	}
+	return template.HTML(buf.String()), nil
 }
