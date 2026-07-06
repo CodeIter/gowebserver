@@ -14,7 +14,7 @@ var templates *template.Template
 // LoadTemplates parses the HTML templates from the embedded filesystem.
 func LoadTemplates() error {
 	var err error
-	templates, err = template.ParseFS(assets.EmbeddedFiles, "views/layout.html", "views/meta.html", "views/home.html")
+	templates, err = template.ParseFS(assets.EmbeddedFiles, "views/*.html")
 	return err
 }
 
