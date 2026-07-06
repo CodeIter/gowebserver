@@ -14,8 +14,14 @@ Dockerfile
 *.exe
 Makefile
 /bin/
-*.log
 /server
+
+# Ignore temporary files
+getfiles.txt
+*.log
+
+# Ignore scripts
+getfiles.sh
 
 # Ignore environment files
 .env

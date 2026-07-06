@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# getfiles.sh
+# This script lists and concatenates the contents of selected files
+# in the current directory and its subdirectories, excluding certain
+# directories.
+# Useful for feeding the contents of files to a language model for analysis
+# or summarization.
+
+tree --gitignore -I 'node_modules|.git|vendor'
+
+for file in "${@}" ; do
+    echo "=================================================================="
+    echo File: "$file"
+    echo "=================================================================="
+    cat "$file"
+    echo "=================================================================="
+done | tee "getfiles.txt"
