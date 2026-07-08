@@ -22,6 +22,17 @@ func JSON(w http.ResponseWriter, status int, data interface{}) {
 	}
 }
 
+// JSON writes a JSON response with the given status code and data.
+func JSONUnscaped(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	encoder := json.NewEncoder(w)
+	encoder.SetEscapeHTML(false) // Disable HTML character escaping
+	if err := encoder.Encode(data); err != nil {
+		slog.Error("failed to write response", "error", err)
+	}
+}
+
 // Error writes a structured error response in JSON format.
 func Error(w http.ResponseWriter, status int, message string) {
 	// Log internal details if needed, but don't send to client

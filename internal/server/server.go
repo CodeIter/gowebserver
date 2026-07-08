@@ -37,6 +37,8 @@ func Run(cfg *config.Config) error {
 	mux.HandleFunc("GET /ready", handler.Ready)
 	mux.HandleFunc("GET /about", handler.About)
 	mux.HandleFunc("GET /go/{domain}/{path...}", handler.Redirector)
+	mux.HandleFunc("GET /random/number/{min}/{max}", handler.RandomNumber)
+	mux.HandleFunc("GET /random/password/{length}", handler.RandomPassword)
 
 	// Serve Resources Files
 	ResourcesFs := http.FileServer(http.Dir(cfg.ResourcesDir))
