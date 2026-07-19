@@ -19,10 +19,14 @@ LD_FLAGS := -ldflags "\
 	-X '$(APP_NAME)/version.goVersion=$(GO_VERSION)'"
 
 # Define targets
-.PHONY: build run test docker-build docker-run clean
+.PHONY: fmt build run test docker-build docker-run clean
+
+# Format the Go code
+fmt:
+	go fmt ./...
 
 # Build the Go server binary
-build:
+build: fmt
 	go build $(LD_FLAGS) -o bin/$(BINARY_NAME) $(CMD_PATH)
 
 # Run the Go server
@@ -30,7 +34,7 @@ run:
 	go run $(CMD_PATH)/main.go --port 8080
 
 # Run tests
-test:
+test: fmt
 	go test ./...
 
 # Build the Docker image
